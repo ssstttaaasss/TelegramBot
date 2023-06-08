@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
@@ -42,7 +46,6 @@ namespace PriceCheckerBot
                 }
                 else
                 {
-                    // Here you can implement the logic to connect to your web API and retrieve the price information
                     var price = await GetProductPriceAsync(messageText);
 
                     if (price != null)
@@ -71,25 +74,34 @@ namespace PriceCheckerBot
 
         private static async Task<string> GetProductPriceAsync(string productName)
         {
-            // Connect to your web API and retrieve the price information
-            // You can use HttpClient or any other HTTP client library to make the request
-            // Example:
-            // using (var client = new HttpClient())
-            // {
-            //     var response = await client.GetAsync($"{apiUrl}/products?name={productName}");
-            //     if (response.IsSuccessStatusCode)
-            //     {
-            //         var content = await response.Content.ReadAsStringAsync();
-            //         var products = JsonConvert.DeserializeObject<List<Product>>(content);
-            //         if (products.Count > 0)
-            //         {
-            //             return products[0].Price.ToString();
-            //         }
-            //     }
-            // }
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync($"{apiUrl}/products?name={productName}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var products = JsonConvert.DeserializeObject<List<Product>>(content);
+                        if (products.Count > 0)
+                        {
+                            return products[0].Price.ToString();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error connecting to API: " + ex.Message);
+                }
+            }
 
-            // For demonstration purposes, return a sample price
-            return "$X.XX";
+            return null;
         }
+    }
+
+    class Product
+    {
+        public string Name { get; set; }
+        public decimal Price { get; set; }
     }
 }
