@@ -11,7 +11,7 @@ namespace PriceCheckerBot
     {
         private static TelegramBotClient botClient;
         private static readonly string botToken = "6179606733:AAGKkMhHWhmllGHec92Hj_sO9EjgzebsUYU";
-        private static readonly string apiUrl = "YOUR_API_URL";
+        private static readonly string apiUrl = "https://localhost:7092/swagger/index.html";
 
         static void Main()
         {
