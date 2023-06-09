@@ -5,28 +5,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
-namespace PriceCheckerBot
+namespace TelegramBot
 {
     class Program
     {
-        private static TelegramBotClient botClient;
+        private static TelegramBotClient? _botClient;
         private static readonly string botToken = "6179606733:AAGKkMhHWhmllGHec92Hj_sO9EjgzebsUYU";
-        private static readonly string apiUrl = "https://localhost:7092/";
+        private static readonly string apiUrl = "https://localhost:7092";
 
         static void Main()
         {
-            botClient = new TelegramBotClient(botToken);
-            botClient.OnMessage += Bot_OnMessage;
-            botClient.StartReceiving();
+            _botClient = new TelegramBotClient(botToken);
+            _botClient.OnMessage += Bot_OnMessage;
+            _botClient.StartReceiving();
 
             Console.WriteLine("Bot started. Press any key to exit.");
             Console.ReadKey();
 
-            botClient.StopReceiving();
+            _botClient.StopReceiving();
         }
 
         private static async void Bot_OnMessage(object sender, MessageEventArgs e)
@@ -50,11 +48,11 @@ namespace PriceCheckerBot
 
                     if (price != null)
                     {
-                        await botClient.SendTextMessageAsync(chatId, $"Товар: {messageText}\nЦіна: {price}");
+                        await _botClient.SendTextMessageAsync(chatId, $"Товар: {messageText}\nЦіна: {price}");
                     }
                     else
                     {
-                        await botClient.SendTextMessageAsync(chatId, "Товар не знайдено.");
+                        await _botClient.SendTextMessageAsync(chatId, "Товар не знайдено.");
                     }
                 }
             }
@@ -63,13 +61,13 @@ namespace PriceCheckerBot
         private static async Task SendWelcomeMessageAsync(long chatId)
         {
             var welcomeMessage = "Ласкаво просимо до Price Checker Bot!\n\nЯ допоможу вам знайти ціни на товари. Ви можете скористатися командою /search, щоб знайти ціну певного товару.";
-            await botClient.SendTextMessageAsync(chatId, welcomeMessage);
+            await _botClient.SendTextMessageAsync(chatId, welcomeMessage);
         }
 
         private static async Task SendSearchMessageAsync(long chatId)
         {
             var searchMessage = "Будь ласка, введіть назву товару:";
-            await botClient.SendTextMessageAsync(chatId, searchMessage);
+            await _botClient.SendTextMessageAsync(chatId, searchMessage);
         }
 
         private static async Task<string> GetProductPriceAsync(string productName)
@@ -78,15 +76,12 @@ namespace PriceCheckerBot
             {
                 try
                 {
-                    var response = await client.GetAsync($"{apiUrl}products?name={productName}");
+                    var response = await client.GetAsync($"{apiUrl}/api/products/{productName}");
                     if (response.IsSuccessStatusCode)
                     {
                         var content = await response.Content.ReadAsStringAsync();
-                        var products = JsonConvert.DeserializeObject<List<Product>>(content);
-                        if (products.Count > 0)
-                        {
-                            return products[0].Price.ToString();
-                        }
+                        var product = JsonConvert.DeserializeObject<Product>(content);
+                        return product.Price.ToString();
                     }
                 }
                 catch (Exception ex)
@@ -97,6 +92,7 @@ namespace PriceCheckerBot
 
             return null;
         }
+
     }
 
     class Product
