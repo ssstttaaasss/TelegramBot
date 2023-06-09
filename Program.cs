@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
@@ -15,7 +15,7 @@ namespace PriceCheckerBot
     {
         private static TelegramBotClient botClient;
         private static readonly string botToken = "6179606733:AAGKkMhHWhmllGHec92Hj_sO9EjgzebsUYU";
-        private static readonly string apiUrl = "https://localhost:7092/api/";
+        private static readonly string apiUrl = "https://localhost:7092/";
 
         static void Main()
         {
@@ -78,7 +78,7 @@ namespace PriceCheckerBot
             {
                 try
                 {
-                    var response = await client.GetAsync($"{apiUrl}/products?name={productName}");
+                    var response = await client.GetAsync($"{apiUrl}products?name={productName}");
                     if (response.IsSuccessStatusCode)
                     {
                         var content = await response.Content.ReadAsStringAsync();
