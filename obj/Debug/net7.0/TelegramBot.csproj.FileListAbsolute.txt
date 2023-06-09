@@ -85,3 +85,4 @@
 /Users/stanislavpodolaka/RiderProjects/TelegramBot/bin/Debug/net7.0/runtimes/browser/lib/net7.0/System.Text.Encodings.Web.dll
 /Users/stanislavpodolaka/RiderProjects/TelegramBot/bin/Debug/net7.0/PriseChecker.dll
 /Users/stanislavpodolaka/RiderProjects/TelegramBot/bin/Debug/net7.0/PriseChecker.pdb
+/Users/stanislavpodolaka/RiderProjects/TelegramBot/bin/Debug/net7.0/package-lock.json

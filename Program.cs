@@ -15,7 +15,7 @@ namespace PriceCheckerBot
     {
         private static TelegramBotClient botClient;
         private static readonly string botToken = "6179606733:AAGKkMhHWhmllGHec92Hj_sO9EjgzebsUYU";
-        private static readonly string apiUrl = "https://localhost:7092"; 
+        private static readonly string apiUrl = "https://localhost:7092";
 
         static void Main()
         {
@@ -78,14 +78,14 @@ namespace PriceCheckerBot
             {
                 try
                 {
-                    var response = await client.GetAsync($"{apiUrl}/api/products?name={productName}");
+                    var response = await client.GetAsync($"{apiUrl}/api/Product/{productName}");
                     if (response.IsSuccessStatusCode)
                     {
                         var content = await response.Content.ReadAsStringAsync();
-                        var products = JsonConvert.DeserializeObject<List<Product>>(content);
-                        if (products.Count > 0)
+                        var product = JsonConvert.DeserializeObject<Product>(content);
+                        if (product != null)
                         {
-                            return products[0].Price.ToString();
+                            return product.Price.ToString();
                         }
                     }
                 }
